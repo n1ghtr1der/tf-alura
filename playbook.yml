@@ -1,11 +1,11 @@
 - hosts: teste-tf
   tasks:
-  - name: criando html
-    copy:
-      dest: /home/ubuntu/index.html
-      content: <h1>Teste testoso 2.0</h1>
-  - name: criando servidor http
-    shell: "nohup busybox httpd -f -p 8080 &"
+  # - name: criando html
+  #   copy:
+  #     dest: /home/ubuntu/index.html
+  #     content: <h1>Teste testoso 2.0</h1>
+  # - name: criando servidor http
+  #   shell: "nohup busybox httpd -f -p 8080 &"
   - name: instalando python3 e virtualenv
     apt:      #sinaliza instalação de pacotes
       pkg: #pacotes a serem inseridos
@@ -13,3 +13,18 @@
       - virtualenv
       update_cache: yes #atualiza os repositórios antes de fazer a instalação de novos pacotes
     become: yes #permite a execução dos comandos do playbook como usuário root
+  - name: instalando dependências com pip (Django e Django Rest)
+    pip:
+      virtualenv: /home/ubuntu/projects/venv #aqui o ansible será responsável por criar e iniciar a virtual env
+      name: #pacote a serem instalados pelo pip
+        - django
+        - djangorestframework
+  - name: iniciando projeto no djando #esta tarefa inicia o projeto do django por meio de comandos do shell
+    shell: '. /home/ubuntu/projects/venv/bin/activate; django-admin startproject setup /home/ubuntu/projects/' #nesta mais de um comando é utilizado por meio do ; que os separa
+  - name: alterando o host do settings
+    lineinfile: #essa propriedade indica que uma linha será alterada em um arquivo
+      path: /home/ubuntu/projects/setup/settings.py
+      regexp:  'ALLOWED_HOSTS'
+      line: 'ALLOWED_HOSTS = ["*"]'
+      backrefs: yes
+      

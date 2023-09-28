@@ -24,7 +24,6 @@
   - name: alterando o host do settings
     lineinfile: #essa propriedade indica que uma linha será alterada em um arquivo
       path: /home/ubuntu/projects/setup/settings.py
-      regexp:  'ALLOWED_HOSTS'
-      line: 'ALLOWED_HOSTS = ["*"]'
-      backrefs: yes
-      
+      regexp:  'ALLOWED_HOSTS' #linha a ser alterada
+      line: 'ALLOWED_HOSTS = ["*"]' #novo conteúdo da linha
+      backrefs: yes #não alterar o arquivo caso a linha não exista

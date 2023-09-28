@@ -19,6 +19,6 @@ resource "aws_instance" "terraform-teste" {
   instance_type = "t2.micro"
   key_name = "default-key"
   tags = {
-    Name = "InstanceTerraform"
+    Name = "Instance-Terraform"
   }
 }

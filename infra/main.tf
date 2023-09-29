@@ -17,15 +17,15 @@ provider "aws" {
 resource "aws_instance" "terraform-teste" {
   ami = "ami-024e6efaf93d85776"
   instance_type = var.instance_type
-  key_name = "default-key"
+  key_name = var.ssh_key
   tags = {
     Name = "Instance-Terraform"
   }
 }
 
 resource "aws_key_pair" "ssh-key" {
-  key_name = DEV
-  public_key = file("${var.chave}.pub")
+  key_name = var.ssh_key
+  public_key = file("${var.ssh_key}.pub")
 }
 
 output "public-ipv4" {

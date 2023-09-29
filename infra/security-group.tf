@@ -1,5 +1,5 @@
 resource "aws_security_group" "tf-security-group" {
-    name = "tf-security-group"
+    name = "tf-security-group-${var.sg_name}"
     ingress{
         cidr_blocks = [ "0.0.0.0/0" ]
         ipv6_cidr_blocks = [ "::/0" ]
@@ -15,6 +15,6 @@ resource "aws_security_group" "tf-security-group" {
         protocol = "-1"
     }
     tags = {
-        Name = "tf-access"
+        Name = "tf-access-${var.sg_name}"
     }
 }

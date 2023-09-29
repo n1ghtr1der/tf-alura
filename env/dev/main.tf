@@ -4,3 +4,7 @@ module "aws-dev" {
   region_aws = "us-east-2"
   ssh_key = "dev"
 }
+
+output "ipv4" {
+  value = module.aws-dev.public-ipv4
+}

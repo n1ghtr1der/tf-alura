@@ -1,11 +1,5 @@
-- hosts: teste-tf
+- hosts: dev-instance
   tasks:
-  # - name: criando html
-  #   copy:
-  #     dest: /home/ubuntu/index.html
-  #     content: <h1>Teste testoso 2.0</h1>
-  # - name: criando servidor http
-  #   shell: "nohup busybox httpd -f -p 8080 &"
   - name: instalando python3 e virtualenv
     apt:      #sinaliza instalação de pacotes
       pkg: #pacotes a serem inseridos
@@ -19,8 +13,13 @@
       name: #pacote a serem instalados pelo pip
         - django
         - djangorestframework
-  - name: iniciando projeto no djando #esta tarefa inicia o projeto do django por meio de comandos do shell
+  - name: verificando se o projeto já existe
+    stat:
+      path: /home/ubuntu/projects/setup/settings.py
+    register: projeto
+  - name: iniciando projeto no django #esta tarefa inicia o projeto do django por meio de comandos do shell
     shell: '. /home/ubuntu/projects/venv/bin/activate; django-admin startproject setup /home/ubuntu/projects/' #nesta mais de um comando é utilizado por meio do ; que os separa
+    when: not projeto.stat.exists
   - name: alterando o host do settings
     lineinfile: #essa propriedade indica que uma linha será alterada em um arquivo
       path: /home/ubuntu/projects/setup/settings.py

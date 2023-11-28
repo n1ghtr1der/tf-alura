@@ -22,8 +22,16 @@ resource "aws_launch_template" "terraform-template-ec2" {
     Name = "TF Ansible Python"
   }
   security_group_names = [ var.sg_name ]
+  user_data = filebase64("ansible.sh")
 }
 
-output "public-ipv4" {
-  value = aws_instance.terraform-teste.public_ip
+resource "aws_autoscaling_group" "autoscaling-group" {
+  availability_zones = [ "${var.region_aws}a" ]
+  name = var.group_name
+  max_size = var.max_size
+  min_size = var.min_size
+  launch_template {
+    id = aws_launch_template.terraform-template-ec2.id
+    version = "$Latest"
+  }
 }

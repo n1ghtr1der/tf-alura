@@ -2,7 +2,7 @@ module "aws-prod" {
   source = "../../infra"
   instance_type = "t2.micro"
   region_aws = "us-east-2"
-  ssh_key = "prod"
+  ssh_key = "default-key"
   sg_name = "sg-prod"
 }
 

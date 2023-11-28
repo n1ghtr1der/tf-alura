@@ -14,18 +14,14 @@ provider "aws" {
   region = var.region_aws
 }
 
-resource "aws_instance" "terraform-teste" {
-  ami = "ami-024e6efaf93d85776"
+resource "aws_launch_template" "terraform-template-ec2" {
+  image_id = "ami-024e6efaf93d85776"
   instance_type = var.instance_type
   key_name = var.ssh_key
   tags = {
-    Name = "Instance-Terraform"
+    Name = "TF Ansible Python"
   }
-}
-
-resource "aws_key_pair" "ssh-key" {
-  key_name = var.ssh_key
-  public_key = file("${var.ssh_key}.pub")
+  security_group_names = [ var.sg_name ]
 }
 
 output "public-ipv4" {

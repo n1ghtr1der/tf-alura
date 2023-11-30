@@ -70,3 +70,15 @@ resource "aws_lb_listener" "listener_lb" {
     target_group_arn = aws_lb_target_group.lb_target_group.arn 
   }
 }
+
+resource "aws_autoscaling_policy" "scaling-policy-prod" {
+  name = "terraform-scale"
+  autoscaling_group_name = var.group_name
+  policy_type = "TargetTrackingScaling"
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value = 50.0
+  }
+}

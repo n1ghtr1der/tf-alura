@@ -7,8 +7,6 @@ module "aws-dev" {
   min_size = 0
   max_size = 1
   group_name = dev-autoscaling
+  production = false
 }
 
-output "ipv4" {
-  value = module.aws-dev.public-ipv4
-}

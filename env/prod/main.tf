@@ -7,8 +7,5 @@ module "aws-prod" {
   min_size = 1
   max_size = 3
   group_name = prod-autoscaling
-}
-
-output "ipv4" {
-  value = module.aws-prod.public-ipv4
+  production = true
 }

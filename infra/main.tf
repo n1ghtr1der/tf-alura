@@ -22,7 +22,7 @@ resource "aws_launch_template" "terraform-template-ec2" {
     Name = "TF Ansible Python"
   }
   security_group_names = [ var.sg_name ]
-  user_data = filebase64("ansible.sh")
+  user_data = var.production ? filebase64("ansible.sh") : ""
 }
 
 resource "aws_autoscaling_group" "autoscaling-group" {
@@ -34,7 +34,7 @@ resource "aws_autoscaling_group" "autoscaling-group" {
     id = aws_launch_template.terraform-template-ec2.id
     version = "$Latest"
   }
-  target_group_arns = aws_lb_target_group.lb_target_group.arn
+  target_group_arns = var.production ? [ aws_lb_target_group.lb_target_group.arn ] : []
 }
 
 resource "aws_default_subnet" "subnet_1" {
@@ -48,6 +48,7 @@ resource "aws_default_subnet" "subnet_2" {
 resource "aws_lb" "load_balancer" {
   internal = false
   subnets = [ aws_default_subnet.subnet_1, aws_default_subnet.subnet_2 ]
+  count = var.production ? 1 : 0
 }
 
 resource "aws_lb_target_group" "lb_target_group" {
@@ -55,6 +56,7 @@ resource "aws_lb_target_group" "lb_target_group" {
   port = "8000"
   protocol = "HTTP"
   vpc_id = aws_vpc.vpc_default.id
+  count = var.production ? 1 : 0
 }
 
 resource "aws_vpc" "vpc_default" {
@@ -62,12 +64,12 @@ resource "aws_vpc" "vpc_default" {
 }
 
 resource "aws_lb_listener" "listener_lb" {
-  load_balancer_arn = aws_lb.load_balancer.arn
+  load_balancer_arn = aws_lb.load_balancer[0].arn
   port = "8000"
   protocol = "HTTP"
   default_action {
     type = "forward"
-    target_group_arn = aws_lb_target_group.lb_target_group.arn 
+    target_group_arn = aws_lb_target_group.lb_target_group[0].arn 
   }
 }
 
@@ -81,4 +83,5 @@ resource "aws_autoscaling_policy" "scaling-policy-prod" {
     }
     target_value = 50.0
   }
+  count = var.production ? 1 : 0
 }
